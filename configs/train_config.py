@@ -29,7 +29,7 @@ class EmbeddingTrainingConfig:
     # Where are the linear heads for the object concepts saved? This should contain a directory for each concept.
     concept_head_path: Path = Path('./object_concept_heads')
     # Which checkpoint from the classifier training, should we take if working with objects?
-    classifier_step: int = 500
+    classifier_step: int = 100
     # Threshold value to determine if the concept is present in the image. For objects: 0.5, For people: 0.675
     threshold: float = 0.5
     # Number of optimization steps for learning the concept embedding. See paper for more details.
