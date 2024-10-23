@@ -15,6 +15,7 @@ class VLMType(str, Enum):
     BLIP2 = 'blip-2'
     LLAVA = 'llava'
     MINIGPT_V2 = 'minigpt-v2'
+    VIDEOLLAMA2 = 'VideoLLaMA2'
 
 
 class PersonalizationTask(str, Enum):

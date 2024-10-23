@@ -12,15 +12,14 @@ class VideoLLaMA2Input(NamedTuple):
 
 class VideoLLaMA2Wrapper(VLMWrapper):
     def __init__(self, device: str = 'cuda', torch_dtype: torch.dtype = torch.bfloat16):
-        self.model_path = 'DAMO-NLP-SG/VideoLLaMA2-7B'
+        self.model_path = 'DAMO-NLP-SG/VideoLLaMA2.1-7B-16F'
         super().__init__(device, torch_dtype)
 
     def set_model(self):
-        model_name = get_model_name_from_path(self.model_path)
-        model, video_processor, tokenizer = model_init(model_name)
+        model, video_processor, tokenizer = model_init(self.model_path)
         processor = Processor(tokenizer=tokenizer, image_processor=video_processor)
         
-        model = model.to(self.device, self.torch_dtype)
+        # model = model.to(self.device, self.torch_dtype)
         
         return model, processor
 

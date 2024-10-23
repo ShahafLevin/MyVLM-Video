@@ -35,3 +35,27 @@ loguru==0.7.0
 # Additional requirements for MiniGPT-v2
 webdataset==0.2.86
 decord==0.6.0
+
+# Needed for videollama2
+deepspeed==0.13.1
+imageio==2.34.0
+imageio-ffmpeg==0.4.9
+moviepy==1.0.3
+scenedetect==0.6.3
+opencv-python==4.6.0.66
+pysubs2
+scikit-learn==1.2.2
+sentencepiece==0.1.99
+shortuuid
+einops==0.6.1
+einops-exts==0.0.4
+pydantic>=2.0
+markdown2[all]
+gradio==3.50.0
+gradio_client==0.6.1
+httpx==0.24.1
+openai
+tensorboard
+wandb
+tabulate
+spaces==0.29.2

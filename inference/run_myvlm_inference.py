@@ -10,22 +10,26 @@ from concept_heads.clip.head import CLIPConceptHead
 from concept_heads.face_recognition.head import FaceConceptHead
 from configs.inference_config import InferenceConfig
 from inference import inference_utils
-from myvlm import myblip2, myllava, myminigpt_v2
+from myvlm import myblip2, myllava, myminigpt_v2, myvideollama2
 from myvlm.common import ConceptType, seed_everything, CLIP_MODEL_NAME, VLMType, VLM_TO_LAYER
 from myvlm.myvlm import MyVLM
 from vlms.blip2_wrapper import BLIP2Wrapper
 from vlms.llava_wrapper import LLaVAWrapper
 from vlms.minigpt_wrapper import MiniGPTWrapper
+from vlms.videollama2_wrapper import VideoLLaMA2Wrapper
 
 VLM_TYPE_TO_WRAPPER = {
     VLMType.BLIP2: BLIP2Wrapper,
     VLMType.LLAVA: LLaVAWrapper,
-    VLMType.MINIGPT_V2: MiniGPTWrapper
+    VLMType.MINIGPT_V2: MiniGPTWrapper,
+    VLMType.VIDEOLLAMA2: VideoLLaMA2Wrapper
+
 }
 VLM_TYPE_TO_MYVLM = {
     VLMType.BLIP2: myblip2.MyBLIP2,
     VLMType.LLAVA: myllava.MyLLaVA,
-    VLMType.MINIGPT_V2: myminigpt_v2.MyMiniGPT_v2
+    VLMType.MINIGPT_V2: myminigpt_v2.MyMiniGPT_v2,
+    VLMType.VIDEOLLAMA2: myvideollama2.MyVideoLLaMA2
 }
 
 
