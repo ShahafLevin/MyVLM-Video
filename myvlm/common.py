@@ -61,7 +61,7 @@ VLM_TO_PROMPTS = {
     }
 }
 
-VALID_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png']
+VALID_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.mp4']
 
 CLIP_MODEL_NAME = "DFN5B-CLIP-ViT-H-14-384"
 MINIGPT_V2_CKPT_PATH = "/path/to/minigptv2_checkpoint.pth"

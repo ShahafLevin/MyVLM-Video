@@ -26,7 +26,7 @@ VLM_TYPE_TO_PROMPT = {
     VLMType.BLIP2: '',  # empty prompt for captioning
     VLMType.LLAVA: 'Please caption this image.',
     VLMType.MINIGPT_V2: 'Please caption this image.',
-    VLMType.VIDEOLLAMA2: 'Please caption this video'
+    VLMType.VIDEOLLAMA2: 'What animals are in the video, what are they doing, and how does the video feel?'
 }
 DEVICE = 'cuda'
 
@@ -49,6 +49,7 @@ def run_inference(cfg: InferenceConfig):
     Generate original VLM captions on images in the specified image root. Captions will be saved as a json file in the
     same directory, mapping each image path to its caption.
     """
+    print(cfg.image_paths)
     vlm_wrapper = VLM_TYPE_TO_WRAPPER[cfg.vlm_type](device=DEVICE, torch_dtype=cfg.torch_dtype)
     print("Wrapper loaded successfully")
     if (cfg.images_root / f'original_{cfg.vlm_type}_captions.json').exists():
@@ -61,8 +62,10 @@ def run_inference(cfg: InferenceConfig):
         if image_path in path_to_original_caption:
             continue
         print(f"Image path: {image_path}")
+        # TODO: Continue from here....
         inputs = vlm_wrapper.preprocess(image_path, prompt=VLM_TYPE_TO_PROMPT[cfg.vlm_type])
         caption = vlm_wrapper.generate(inputs, concept_signals=None)
+        print(f"Caption: {caption}")
         path_to_original_caption[image_path] = caption
 
     with open(cfg.images_root / f'original_{cfg.vlm_type}_captions.json', 'w') as f:
