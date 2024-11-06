@@ -112,3 +112,71 @@ def mm_infer(image_or_video, instruct, model, tokenizer, modal='video', **kwargs
     outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip()
 
     return outputs
+
+# TODO: How to infer using image and video?s
+def mm_infer_image_and_video(image, video, instruct, model, tokenizer, **kwargs):
+    """inference api of VideoLLaMA2 for video understanding.
+
+    Args:
+        model: VideoLLaMA2 model.
+        image (torch.Tensor): image tensor (1, C, H, W).
+        video (torch.Tensor): video tensor (T, C, H, W).
+        instruct (list): text instruction for understanding video and image.
+        tokenizer: tokenizer.
+        do_sample (bool): whether to sample.
+    Returns:
+        str: response of the model.
+    """
+    # 1. vision preprocess (load & transform image or video).
+    tensor = [(image.half().cuda(), DEFAULT_IMAGE_TOKEN), 
+              (video.half().cuda(), DEFAULT_VIDEO_TOKEN)]
+
+    # 2. text preprocess (tag process & generate prompt).
+    message = [
+        {'role': 'user', 'content': DEFAULT_IMAGE_TOKEN + '\n' + instruct[0] + "." + DEFAULT_VIDEO_TOKEN + '\n' + instruct[1]},
+    ]
+    
+
+    if model.config.model_type in ['videollama2', 'videollama2_mistral', 'videollama2_mixtral']:
+        system_message = [
+            {'role': 'system', 'content': (
+            """<<SYS>>\nYou are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature."""
+            """\n"""
+            """If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.\n<</SYS>>""")
+            }
+        ]
+    else:
+        system_message = []
+
+    message = system_message + message
+    prompt = tokenizer.apply_chat_template(message, tokenize=False, add_generation_prompt=True)
+
+    input_ids = tokenizer_multimodal_token(prompt, tokenizer, DEFAULT_VIDEO_TOKEN, return_tensors='pt').unsqueeze(0).long().cuda()
+    attention_masks = input_ids.ne(tokenizer.pad_token_id).long().cuda()
+
+    # 3. generate response according to visual signals and prompts. 
+    keywords = [tokenizer.eos_token]
+    stopping_criteria = KeywordsStoppingCriteria(keywords, tokenizer, input_ids)
+
+    do_sample = kwargs.get('do_sample', False)
+    temperature = kwargs.get('temperature', 0.2 if do_sample else 0.0)
+    top_p = kwargs.get('top_p', 0.9)
+    max_new_tokens = kwargs.get('max_new_tokens', 2048)
+
+    with torch.inference_mode():
+        output_ids = model.generate(
+            input_ids,
+            attention_mask=attention_masks,
+            images=tensor,
+            do_sample=do_sample,
+            temperature=temperature,
+            max_new_tokens=max_new_tokens,
+            top_p=top_p,
+            use_cache=True,
+            stopping_criteria=[stopping_criteria],
+            pad_token_id=tokenizer.eos_token_id,
+        )
+
+    outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip()
+
+    return outputs
